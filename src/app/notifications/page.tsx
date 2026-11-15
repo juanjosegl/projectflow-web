@@ -9,7 +9,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import api from '@/lib/api';
@@ -17,8 +16,11 @@ import { teamsService } from '@/lib/services/teams.service';
 import { ApiResponse, Notification } from '@/types';
 import { useRouter } from 'next/navigation';
 
+type ApiError = { response?: { data?: { message?: string } } };
+
 export default function NotificationsPage() {
   const t = useTranslations('notifications');
+  const ti = useTranslations('invitations');
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -30,7 +32,7 @@ export default function NotificationsPage() {
     },
   });
 
-  const { data: invitations, isLoading: loadingInvites } = useQuery({
+  const { data: invitations } = useQuery({
     queryKey: ['my-invitations'],
     queryFn: teamsService.getMyInvitations,
   });
@@ -53,13 +55,22 @@ export default function NotificationsPage() {
 
   const acceptMutation = useMutation({
     mutationFn: (token: string) => teamsService.acceptInvitation(token),
-    onSuccess: (data: any) => {
+    onSuccess: (data: { teamId: string }) => {
       toast.success('You joined the team!');
       queryClient.invalidateQueries({ queryKey: ['my-invitations'] });
       queryClient.invalidateQueries({ queryKey: ['teams'] });
       router.push(`/teams/${data.teamId}`);
     },
-    onError: (err: any) => toast.error(err.response?.data?.message ?? 'Failed to accept'),
+    onError: (err: ApiError) => toast.error(err.response?.data?.message ?? 'Failed to accept'),
+  });
+
+  const declineMutation = useMutation({
+    mutationFn: (token: string) => teamsService.declineInvitation(token),
+    onSuccess: () => {
+      toast.success(ti('declined'));
+      queryClient.invalidateQueries({ queryKey: ['my-invitations'] });
+    },
+    onError: (err: ApiError) => toast.error(err.response?.data?.message ?? 'Failed to decline'),
   });
 
   const unreadCount = notifications?.filter((n) => !n.read).length ?? 0;
@@ -112,10 +123,16 @@ export default function NotificationsPage() {
                         onClick={() => acceptMutation.mutate(inv.token)}
                         disabled={acceptMutation.isPending}
                       >
-                        <CheckCircle2 size={13} /> Accept
+                        <CheckCircle2 size={13} /> {ti('accept')}
                       </Button>
-                      <Button size="sm" variant="outline" className="h-8 gap-1.5 text-slate-500">
-                        <XCircle size={13} /> Decline
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 gap-1.5 text-slate-500"
+                        onClick={() => declineMutation.mutate(inv.token)}
+                        disabled={declineMutation.isPending}
+                      >
+                        <XCircle size={13} /> {ti('decline')}
                       </Button>
                     </div>
                   </CardContent>
@@ -158,7 +175,10 @@ export default function NotificationsPage() {
                       ? 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950'
                       : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 cursor-pointer hover:border-slate-300'
                   )}
-                  onClick={() => !n.read && markOneMutation.mutate(n.id)}
+                  onClick={() => {
+                    if (!n.read) markOneMutation.mutate(n.id);
+                    if (n.task) router.push(`/projects/${n.task.projectId}/tasks/${n.task.id}`);
+                  }}
                 >
                   <CardContent className="p-4 flex items-start gap-3">
                     <div className={cn(

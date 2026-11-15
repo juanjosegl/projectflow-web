@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { authService } from '@/lib/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
-import { useRedirectIfAuth } from '@/hooks/useAuth';
+import { useRedirectIfAuth, useDemoLogin } from '@/hooks/useAuth';
 import { clearQueryCache } from '@/lib/providers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,7 @@ export default function LoginPage() {
   useRedirectIfAuth();
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
+  const demo = useDemoLogin();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -89,6 +90,10 @@ export default function LoginPage() {
               {isPending ? t('signingIn') : t('signIn')}
             </Button>
           </form>
+
+          <Button type="button" variant="secondary" className="w-full mt-3" onClick={() => demo.mutate()} disabled={demo.isPending}>
+            {demo.isPending ? t('signingIn') : t('tryDemo')}
+          </Button>
 
           <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-5">
             {t('noAccount')}{' '}

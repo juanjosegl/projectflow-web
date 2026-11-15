@@ -38,6 +38,7 @@ export interface Project {
   endDate?: string;
   teamId: string;
   _count?: { tasks: number };
+  team?: Team;
 }
 
 export type ProjectStatus = 'ACTIVE' | 'ARCHIVED' | 'COMPLETED';
@@ -74,7 +75,7 @@ export interface Notification {
   message: string;
   read: boolean;
   createdAt: string;
-  task?: { id: string; title: string };
+  task?: { id: string; title: string; projectId: string };
 }
 
 export interface ApiResponse<T> {
@@ -89,4 +90,13 @@ export interface DashboardStats {
   overdueTasksCount: number;
   teamsCount: number;
   recentActivity: Task[];
+}
+
+export interface TeamStats {
+  totalTasks: number;
+  tasksByStatus: { status: TaskStatus; count: number }[];
+  tasksByPriority: { priority: TaskPriority; count: number }[];
+  membersCount: number;
+  projectsCount: number;
+  topContributors: { user: Pick<User, 'id' | 'name' | 'avatar'> | null; tasksCompleted: number }[];
 }

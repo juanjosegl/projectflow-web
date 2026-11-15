@@ -34,7 +34,19 @@ export const teamsService = {
     return res.data.data;
   },
   async acceptInvitation(token: string) {
-    const res = await api.post(`/teams/invitations/${token}/accept`);
+    const res = await api.post<ApiResponse<{ teamId: string; teamName: string }>>(`/teams/invitations/${token}/accept`);
     return res.data.data;
+  },
+  async declineInvitation(token: string) {
+    await api.post(`/teams/invitations/${token}/decline`);
+  },
+  async updateMemberRole(teamId: string, memberId: string, role: string) {
+    await api.patch(`/teams/${teamId}/members/${memberId}/role`, { role });
+  },
+  async removeMember(teamId: string, memberId: string) {
+    await api.delete(`/teams/${teamId}/members/${memberId}`);
+  },
+  async leave(teamId: string) {
+    await api.delete(`/teams/${teamId}/leave`);
   },
 };

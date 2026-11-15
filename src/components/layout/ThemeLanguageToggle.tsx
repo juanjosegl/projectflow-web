@@ -19,19 +19,21 @@ export function ThemeLanguageToggle() {
   ] as const;
 
   return (
-    <div className="px-3 py-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+    <div className="flex items-center gap-3">
       {/* Theme */}
       <div className="flex items-center gap-1 px-1">
         {themes.map(({ value, icon: Icon }) => (
           <button
             key={value}
             onClick={() => setTheme(value)}
-            className={`flex-1 flex justify-center py-1.5 rounded-md transition-colors ${
+            className={`flex justify-center p-1.5 rounded-md transition-colors ${
               theme === value
                 ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
                 : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
             }`}
             title={value}
+            aria-label={`${value} theme`}
+            aria-pressed={theme === value}
           >
             <Icon size={14} />
           </button>
@@ -45,7 +47,8 @@ export function ThemeLanguageToggle() {
           <button
             key={lang}
             onClick={() => setLocale(lang)}
-            className={`flex-1 py-1 rounded-md text-xs font-medium transition-colors ${
+            aria-pressed={locale === lang}
+            className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${
               locale === lang
                 ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
                 : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'

@@ -119,7 +119,8 @@
     "passwordTooShort": "Password must be at least 8 characters",
     "invalidCredentials": "Invalid credentials",
     "emailRegistered": "Email already registered",
-    "accountCreated": "Account created successfully!"
+    "accountCreated": "Account created successfully!",
+    "tryDemo": "Try the demo account"
   },
   "status": {
     "BACKLOG": "Backlog",
@@ -150,5 +151,77 @@
     "search": "Search...",
     "close": "Close",
     "optional": "optional"
+  },
+  "landing": {
+    "title": "Plan the work, move the cards, ship with your team.",
+    "subtitle": "ProjectFlow is a team task manager with kanban boards, roles, invitations, comments and notifications. Explore it with a ready-made demo team, no sign-up needed.",
+    "tryDemo": "Open the live demo",
+    "signIn": "Sign in",
+    "goDashboard": "Go to your dashboard",
+    "demoNote": "You sign in as Alice, admin of a demo team with two projects.",
+    "waking": "Waking up the server. Free hosting can take about 30 seconds on the first visit.",
+    "featuresTitle": "What you can do",
+    "f1t": "Kanban boards",
+    "f1d": "Drag tasks across Backlog, To do, In progress, In review and Done.",
+    "f2t": "Teams and roles",
+    "f2d": "Admins, managers and developers, each with their own permissions.",
+    "f3t": "Invitations",
+    "f3d": "Invite people by email; they join with one click from the link.",
+    "f4t": "Comments and notifications",
+    "f4d": "Discuss a task and get notified when work is assigned or moves.",
+    "f5t": "Personal dashboard",
+    "f5d": "Your workload by status, overdue tasks and what changed this week.",
+    "f6t": "Light, dark, English, Spanish",
+    "f6d": "Theme and language switch instantly and are remembered.",
+    "stackTitle": "How it is built",
+    "stackApi": "API",
+    "stackWeb": "Web",
+    "source": "Source code",
+    "builtBy": "Built by Juan José Gutiérrez as a portfolio project."
+  },
+  "board": {
+    "noTasks": "Drop tasks here",
+    "moved": "Task moved",
+    "moveFailed": "Could not move the task. The board was restored.",
+    "dragHint": "Drag cards between columns to change their status.",
+    "overdue": "Overdue",
+    "created": "Task created",
+    "createFailed": "Could not create the task"
+  },
+  "taskDetail": {
+    "noDescription": "No description yet.",
+    "comments": "Comments",
+    "writeComment": "Write a comment...",
+    "noComments": "No comments yet.",
+    "createdBy": "Created by",
+    "unassigned": "Unassigned",
+    "me": "me",
+    "updated": "Task updated",
+    "updateFailed": "Could not update the task",
+    "deleteTask": "Delete task",
+    "deleted": "Task deleted",
+    "deleteFailed": "Only the creator, managers or admins can delete this task",
+    "clearDate": "Clear",
+    "editDetails": "Edit details",
+    "saveDetails": "Save"
+  },
+  "teamDetail": {
+    "progress": "Team progress",
+    "tasksDone": "tasks done",
+    "remove": "Remove",
+    "removed": "Member removed",
+    "roleUpdated": "Role updated",
+    "leave": "Leave team",
+    "left": "You left the team",
+    "confirmLeave": "Leave this team? You will lose access to its projects.",
+    "confirmRemove": "Remove this member from the team?",
+    "you": "you",
+    "invited": "Invitation sent",
+    "inviteFailed": "Could not send the invitation"
+  },
+  "invitations": {
+    "declined": "Invitation declined",
+    "accept": "Accept",
+    "decline": "Decline"
   }
 }

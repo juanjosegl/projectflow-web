@@ -119,7 +119,8 @@
     "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
     "invalidCredentials": "Credenciales incorrectas",
     "emailRegistered": "Este correo ya está registrado",
-    "accountCreated": "¡Cuenta creada exitosamente!"
+    "accountCreated": "¡Cuenta creada exitosamente!",
+    "tryDemo": "Probar con la cuenta demo"
   },
   "status": {
     "BACKLOG": "Pendiente",
@@ -150,5 +151,77 @@
     "search": "Buscar...",
     "close": "Cerrar",
     "optional": "opcional"
+  },
+  "landing": {
+    "title": "Planifica el trabajo, mueve las tarjetas y entrega con tu equipo.",
+    "subtitle": "ProjectFlow es un gestor de tareas para equipos con tableros kanban, roles, invitaciones, comentarios y notificaciones. Explóralo con un equipo de demostración listo, sin registrarte.",
+    "tryDemo": "Abrir la demo en vivo",
+    "signIn": "Iniciar sesión",
+    "goDashboard": "Ir a tu panel",
+    "demoNote": "Entras como Alice, administradora de un equipo demo con dos proyectos.",
+    "waking": "Despertando el servidor. El hosting gratuito puede tardar unos 30 segundos en la primera visita.",
+    "featuresTitle": "Qué puedes hacer",
+    "f1t": "Tableros kanban",
+    "f1d": "Arrastra tareas entre Backlog, Por hacer, En progreso, En revisión y Hecho.",
+    "f2t": "Equipos y roles",
+    "f2d": "Administradores, managers y desarrolladores, cada uno con sus permisos.",
+    "f3t": "Invitaciones",
+    "f3d": "Invita personas por correo; se unen con un clic desde el enlace.",
+    "f4t": "Comentarios y notificaciones",
+    "f4d": "Conversa sobre una tarea y recibe avisos cuando te asignan trabajo o cambia de estado.",
+    "f5t": "Panel personal",
+    "f5d": "Tu carga por estado, tareas vencidas y lo que cambió esta semana.",
+    "f6t": "Claro, oscuro, inglés, español",
+    "f6d": "El tema y el idioma cambian al instante y se recuerdan.",
+    "stackTitle": "Cómo está construido",
+    "stackApi": "API",
+    "stackWeb": "Web",
+    "source": "Código fuente",
+    "builtBy": "Desarrollado por Juan José Gutiérrez como proyecto de portafolio."
+  },
+  "board": {
+    "noTasks": "Suelta tareas aquí",
+    "moved": "Tarea movida",
+    "moveFailed": "No se pudo mover la tarea. Se restauró el tablero.",
+    "dragHint": "Arrastra las tarjetas entre columnas para cambiar su estado.",
+    "overdue": "Vencida",
+    "created": "Tarea creada",
+    "createFailed": "No se pudo crear la tarea"
+  },
+  "taskDetail": {
+    "noDescription": "Sin descripción todavía.",
+    "comments": "Comentarios",
+    "writeComment": "Escribe un comentario...",
+    "noComments": "Aún no hay comentarios.",
+    "createdBy": "Creada por",
+    "unassigned": "Sin asignar",
+    "me": "yo",
+    "updated": "Tarea actualizada",
+    "updateFailed": "No se pudo actualizar la tarea",
+    "deleteTask": "Eliminar tarea",
+    "deleted": "Tarea eliminada",
+    "deleteFailed": "Solo el creador, managers o administradores pueden eliminar esta tarea",
+    "clearDate": "Quitar",
+    "editDetails": "Editar detalles",
+    "saveDetails": "Guardar"
+  },
+  "teamDetail": {
+    "progress": "Progreso del equipo",
+    "tasksDone": "tareas hechas",
+    "remove": "Quitar",
+    "removed": "Miembro eliminado",
+    "roleUpdated": "Rol actualizado",
+    "leave": "Salir del equipo",
+    "left": "Saliste del equipo",
+    "confirmLeave": "¿Salir de este equipo? Perderás acceso a sus proyectos.",
+    "confirmRemove": "¿Quitar a este miembro del equipo?",
+    "you": "tú",
+    "invited": "Invitación enviada",
+    "inviteFailed": "No se pudo enviar la invitación"
+  },
+  "invitations": {
+    "declined": "Invitación rechazada",
+    "accept": "Aceptar",
+    "decline": "Rechazar"
   }
 }

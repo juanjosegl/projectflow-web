@@ -1,5 +1,5 @@
 import api from '../api';
-import { DashboardStats, ApiResponse } from '@/types';
+import { DashboardStats, TeamStats, ApiResponse } from '@/types';
 
 export const dashboardService = {
   async getMyStats() {
@@ -7,7 +7,7 @@ export const dashboardService = {
     return res.data.data;
   },
   async getTeamStats(teamId: string) {
-    const res = await api.get(`/dashboard/teams/${teamId}`);
+    const res = await api.get<ApiResponse<TeamStats>>(`/dashboard/teams/${teamId}`);
     return res.data.data;
   },
 };

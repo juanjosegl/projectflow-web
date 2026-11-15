@@ -6,13 +6,13 @@ export interface TaskUpdatePayload {
   description?: string;
   status?: string;
   priority?: string;
-  dueDate?: string;
+  dueDate?: string | null;
   position?: number;
   assigneeId?: string | null;
 }
 
 export const tasksService = {
-  async create(projectId: string, data: Partial<Task> & { assigneeId?: string }) {
+  async create(projectId: string, data: TaskUpdatePayload & { title: string }) {
     const res = await api.post<ApiResponse<Task>>(`/projects/${projectId}/tasks`, data);
     return res.data.data;
   },
@@ -21,7 +21,7 @@ export const tasksService = {
     return res.data.data;
   },
   async getOne(taskId: string) {
-    const res = await api.get<ApiResponse<Task & { comments: any[] }>>(`/tasks/${taskId}`);
+    const res = await api.get<ApiResponse<Task>>(`/tasks/${taskId}`);
     return res.data.data;
   },
   async update(taskId: string, data: TaskUpdatePayload) {

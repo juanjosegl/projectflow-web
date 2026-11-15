@@ -128,3 +128,14 @@
     @apply font-sans;
   }
 }
+/* Landing hero: the in-progress card slides once into review to show the board in action. */
+@keyframes demo-card-move {
+  0%, 35% { transform: translateX(0); }
+  70%, 100% { transform: translate(calc(100% + 0.625rem + 1rem + 2px), calc(100% + 0.5rem)); }
+}
+.demo-card-move {
+  animation: demo-card-move 2.4s cubic-bezier(0.65, 0, 0.35, 1) 0.8s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .demo-card-move { animation: none; }
+}

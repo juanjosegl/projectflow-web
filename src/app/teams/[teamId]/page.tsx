@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { Users, Plus, ArrowLeft, FolderKanban, Crown, Shield, Code2, Mail } from 'lucide-react';
+import { Users, Plus, ArrowLeft, FolderKanban, Crown, Shield, Code2, Mail, LogOut, X } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { StatusBadge } from '@/components/shared/StatusBadge';
@@ -18,6 +18,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { teamsService } from '@/lib/services/teams.service';
 import { projectsService } from '@/lib/services/projects.service';
+import { dashboardService } from '@/lib/services/dashboard.service';
+import { useAuthStore } from '@/store/auth.store';
+import { Role } from '@/types';
+
+type ApiError = { response?: { data?: { message?: string } } };
 
 const ROLE_ICONS: Record<string, React.ReactNode> = {
   ADMIN: <Crown size={12} />,
@@ -30,6 +35,8 @@ export default function TeamDetailPage() {
   const tp = useTranslations('projects');
   const tc = useTranslations('common');
   const ts = useTranslations('status');
+  const tt = useTranslations('teamDetail');
+  const { user } = useAuthStore();
   const { teamId } = useParams<{ teamId: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -46,17 +53,47 @@ export default function TeamDetailPage() {
     queryFn: () => projectsService.getByTeam(teamId),
   });
 
+  const { data: stats } = useQuery({
+    queryKey: ['dashboard', 'team', teamId],
+    queryFn: () => dashboardService.getTeamStats(teamId),
+  });
+
+  const myRole = team?.members?.find((m) => m.user.id === user?.id)?.role;
+  const isAdmin = myRole === 'ADMIN';
+  const canManage = isAdmin || myRole === 'MANAGER';
+  const done = stats?.tasksByStatus.find((s) => s.status === 'DONE')?.count ?? 0;
+  const pct = stats?.totalTasks ? Math.round((done / stats.totalTasks) * 100) : 0;
+  const apiError = (fallback: string) => (err: ApiError) => toast.error(err.response?.data?.message ?? fallback);
+
+  const roleMutation = useMutation({
+    mutationFn: ({ memberId, role }: { memberId: string; role: Role }) => teamsService.updateMemberRole(teamId, memberId, role),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['teams', teamId] }); toast.success(tt('roleUpdated')); },
+    onError: apiError(tt('inviteFailed')),
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: (memberId: string) => teamsService.removeMember(teamId, memberId),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['teams', teamId] }); toast.success(tt('removed')); },
+    onError: apiError(tt('inviteFailed')),
+  });
+
+  const leaveMutation = useMutation({
+    mutationFn: () => teamsService.leave(teamId),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['teams'] }); toast.success(tt('left')); router.push('/teams'); },
+    onError: apiError(tt('inviteFailed')),
+  });
+
   const inviteForm = useForm<{ email: string; role: string }>();
   const projectForm = useForm<{ name: string; description?: string }>();
 
   const inviteMutation = useMutation({
     mutationFn: (data: { email: string; role: string }) => teamsService.invite(teamId, data),
     onSuccess: () => {
-      toast.success('Invitation sent');
+      toast.success(tt('invited'));
       inviteForm.reset();
       setInviteOpen(false);
     },
-    onError: () => toast.error('Failed to send invitation'),
+    onError: apiError(tt('inviteFailed')),
   });
 
   const projectMutation = useMutation({
@@ -98,18 +135,44 @@ export default function TeamDetailPage() {
           title={team?.name ?? ''}
           description={team?.description}
           action={
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => setInviteOpen(true)} className="gap-1.5">
-                <Mail size={14} /> {t('inviteMember')}
+            <div className="flex flex-wrap justify-end gap-2">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-slate-500"
+                onClick={() => { if (window.confirm(tt('confirmLeave'))) leaveMutation.mutate(); }}>
+                <LogOut size={14} /> {tt('leave')}
               </Button>
-              <Button size="sm" onClick={() => setProjectOpen(true)} className="gap-1.5">
-                <Plus size={14} /> {tp('newProject')}
-              </Button>
+              {canManage && (
+                <>
+                  <Button variant="outline" size="sm" onClick={() => setInviteOpen(true)} className="gap-1.5">
+                    <Mail size={14} /> {t('inviteMember')}
+                  </Button>
+                  <Button size="sm" onClick={() => setProjectOpen(true)} className="gap-1.5">
+                    <Plus size={14} /> {tp('newProject')}
+                  </Button>
+                </>
+              )}
             </div>
           }
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="space-y-6">
+          {stats && (
+            <Card className="border border-slate-200 dark:border-slate-800 shadow-none">
+              <CardContent className="p-5">
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{tt('progress')}</p>
+                <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">{pct}%</p>
+                <p className="text-xs text-slate-500">{done} / {stats.totalTasks} {tt('tasksDone')}</p>
+                <div className="mt-3 flex h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800" role="img" aria-label={`${pct}%`}>
+                  {stats.tasksByStatus.map((s) => (
+                    <div key={s.status} title={`${ts(s.status)}: ${s.count}`}
+                      className={{ BACKLOG: 'bg-slate-300', TODO: 'bg-blue-400', IN_PROGRESS: 'bg-amber-400', IN_REVIEW: 'bg-purple-400', DONE: 'bg-green-500' }[s.status]}
+                      style={{ width: `${stats.totalTasks ? (s.count / stats.totalTasks) * 100 : 0}%` }} />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Members */}
           <Card className="border border-slate-200 dark:border-slate-800 shadow-none">
             <CardHeader className="pb-2 px-5 pt-5">
@@ -133,16 +196,40 @@ export default function TeamDetailPage() {
                         <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{member.user.name}</p>
                         <p className="text-xs text-slate-400 truncate">{member.user.email}</p>
                       </div>
-                      <span className="flex items-center gap-1 text-xs text-slate-400">
-                        {ROLE_ICONS[member.role]}
-                        {member.role}
-                      </span>
+                      {isAdmin && member.user.id !== user?.id ? (
+                        <div className="flex items-center gap-1">
+                          <select
+                            aria-label={`${t('role')}: ${member.user.name}`}
+                            value={member.role}
+                            onChange={(e) => roleMutation.mutate({ memberId: member.user.id, role: e.target.value as Role })}
+                            className="h-7 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-1.5 text-xs text-slate-600 dark:text-slate-300"
+                          >
+                            <option value="ADMIN">Admin</option>
+                            <option value="MANAGER">Manager</option>
+                            <option value="DEVELOPER">Developer</option>
+                          </select>
+                          <button
+                            aria-label={`${tt('remove')} ${member.user.name}`}
+                            onClick={() => { if (window.confirm(tt('confirmRemove'))) removeMutation.mutate(member.user.id); }}
+                            className="p-1 rounded text-slate-400 hover:text-red-500 transition-colors"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="flex items-center gap-1 text-xs text-slate-400">
+                          {ROLE_ICONS[member.role]}
+                          {member.role}{member.user.id === user?.id ? ` (${tt('you')})` : ''}
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>
               )}
             </CardContent>
           </Card>
+
+          </div>
 
           {/* Projects */}
           <div className="lg:col-span-2 space-y-3">
@@ -176,7 +263,7 @@ export default function TeamDetailPage() {
                     </div>
                     <div className="flex items-center gap-3 ml-4 shrink-0">
                       <span className="text-xs text-slate-400">{project._count?.tasks ?? 0} {tp('tasks')}</span>
-                      <StatusBadge value={project.status} label={ts(project.status as any)} />
+                      <StatusBadge value={project.status} label={ts(project.status)} />
                     </div>
                   </CardContent>
                 </Card>
