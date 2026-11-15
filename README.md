@@ -7,6 +7,12 @@ API: [projectflow-api](https://github.com/juanjosegl/projectflow-api).
 
 **Live demo: https://projectflow-web-rho.vercel.app**. Click **Open the live demo** to sign in as the admin of a ready-made demo team. You don't need an account. The demo data resets itself regularly, so feel free to move things around.
 
+![Kanban board](docs/screenshots/board.png)
+
+| Dashboard | Task detail |
+| --- | --- |
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Task detail with comments](docs/screenshots/task.png) |
+
 ## Features
 
 - **Kanban board** with drag and drop between Backlog, To do, In progress, In review and Done (optimistic updates, rolled back if the server refuses)
@@ -42,3 +48,16 @@ cp .env.example .env.local   # NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
 pnpm install
 pnpm dev                     # http://localhost:3000
 ```
+
+## End-to-end test
+
+`e2e/demo.spec.ts` (Playwright) signs in through the demo button, creates a task, moves it to *In progress*, opens it and deletes it.
+CI runs it on every push against the real API and a seeded Postgres. To run it locally, start the API first, then:
+
+```bash
+pnpm build
+pnpm exec playwright install chromium
+pnpm test:e2e
+```
+
+To run it against a deployed site instead, set `BASE_URL` (for example `BASE_URL=https://projectflow-web-rho.vercel.app pnpm test:e2e`). The test deletes the task it creates.
