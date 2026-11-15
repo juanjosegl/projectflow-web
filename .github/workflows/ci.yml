@@ -23,3 +23,62 @@ jobs:
       - run: pnpm build
         env:
           NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: projectflow
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: juanjosegl/projectflow-api
+          path: api
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Start API
+        working-directory: api
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/projectflow
+          JWT_SECRET: ci-access-secret-at-least-32-characters
+          JWT_REFRESH_SECRET: ci-refresh-secret-at-least-32-characters
+          JWT_EXPIRES_IN: 15m
+          JWT_REFRESH_EXPIRES_IN: 7d
+          GOOGLE_CLIENT_ID: ci
+          GOOGLE_CLIENT_SECRET: ci
+          GOOGLE_CALLBACK_URL: http://localhost:3001/api/v1/auth/google/callback
+          FRONTEND_URL: http://localhost:3000
+          PORT: 3001
+        run: |
+          npm ci
+          npx prisma generate
+          npm run build
+          npx prisma migrate deploy
+          npm run db:seed
+          npm start > api.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://localhost:3001/api/v1/health && exit 0; sleep 1; done
+          cat api.log; exit 1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces
+          path: test-results/
