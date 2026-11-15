@@ -44,6 +44,8 @@ jobs:
         with:
           repository: juanjosegl/projectflow-api
           path: api
+      # Move it out of the web workspace so Next's type check doesn't pick up the API sources.
+      - run: mv api "$RUNNER_TEMP/api"
       - uses: pnpm/action-setup@v4
         with:
           version: 10
@@ -52,7 +54,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - name: Start API
-        working-directory: api
+        working-directory: ${{ runner.temp }}/api
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/projectflow
           JWT_SECRET: ci-access-secret-at-least-32-characters
