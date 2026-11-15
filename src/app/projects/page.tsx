@@ -1,5 +1,4 @@
 'use client';
-import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { FolderKanban, ChevronRight } from 'lucide-react';
@@ -74,7 +73,7 @@ export default function ProjectsPage() {
                   </div>
                   <div className="flex items-center gap-3 ml-4 shrink-0">
                     <span className="text-xs text-slate-400 hidden sm:block">{project._count?.tasks ?? 0} {t('tasks')}</span>
-                    <StatusBadge value={project.status} label={ts(project.status as any)} />
+                    <StatusBadge value={project.status} label={ts(project.status)} />
                     <ChevronRight size={15} className="text-slate-300 group-hover:text-slate-500 transition-colors" />
                   </div>
                 </CardContent>

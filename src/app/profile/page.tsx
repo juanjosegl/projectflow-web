@@ -17,11 +17,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthStore } from '@/store/auth.store';
 import { MapPin, Briefcase, Phone, Mail, Camera, Shield } from 'lucide-react';
 import api from '@/lib/api';
-import { ApiResponse, User } from '@/types';
+import { ApiResponse, Role, User } from '@/types';
 
 export default function ProfilePage() {
   const t = useTranslations('profile');
-  const tc = useTranslations('common');
   const { user: storeUser, setAuth, accessToken } = useAuthStore();
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -29,7 +28,7 @@ export default function ProfilePage() {
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
-      const res = await api.get<ApiResponse<any>>('/users/me');
+      const res = await api.get<ApiResponse<User & { teamMembers: { id: string; role: Role; team: { id: string; name: string } }[] }>>('/users/me');
       return res.data.data;
     },
   });
@@ -53,7 +52,7 @@ export default function ProfilePage() {
   }, [profile, reset]);
 
   const updateMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: Partial<User>) => {
       const res = await api.patch<ApiResponse<User>>('/users/me', data);
       return res.data.data;
     },
@@ -163,13 +162,13 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {profile?.teamMembers?.length > 0 && (
+                {!!profile?.teamMembers?.length && (
                   <div className="mt-5 pt-5 border-t border-slate-100 dark:border-slate-800">
                     <p className="text-xs text-slate-400 uppercase tracking-wide font-medium mb-2 flex items-center gap-1.5">
                       <Shield size={12} /> Teams
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {profile.teamMembers.map((tm: any) => (
+                      {profile.teamMembers.map((tm) => (
                         <Badge key={tm.id} variant="secondary" className="text-xs">
                           {tm.team.name} · {tm.role}
                         </Badge>

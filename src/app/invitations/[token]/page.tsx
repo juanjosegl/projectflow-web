@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/auth.store';
 import api from '@/lib/api';
+import { teamsService } from '@/lib/services/teams.service';
 import { ApiResponse } from '@/types';
 
 interface InvitationInfo {
@@ -36,12 +37,12 @@ export default function AcceptInvitationPage() {
   }, [token]);
 
   const acceptMutation = useMutation({
-    mutationFn: () => api.post(`/teams/invitations/${token}/accept`),
-    onSuccess: (res: any) => {
+    mutationFn: () => teamsService.acceptInvitation(token),
+    onSuccess: (data) => {
       toast.success('You joined the team successfully!');
-      router.push(`/teams/${res.data.data.teamId}`);
+      router.push(`/teams/${data.teamId}`);
     },
-    onError: (err: any) => {
+    onError: (err: { response?: { data?: { message?: string } } }) => {
       toast.error(err.response?.data?.message ?? 'Failed to accept invitation');
     },
   });

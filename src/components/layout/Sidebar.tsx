@@ -29,14 +29,14 @@ export function Sidebar() {
   const { data: invitations } = useQuery({
     queryKey: ['my-invitations'],
     queryFn: async () => {
-      const res = await api.get<ApiResponse<any[]>>('/teams/my-invitations');
+      const res = await api.get<ApiResponse<{ status: string }[]>>('/teams/my-invitations');
       return res.data.data;
     },
     enabled: !!user,
     refetchInterval: 60000,
   });
 
-  const unreadCount = (countData?.count ?? 0) + (invitations?.filter((i: any) => i.status === 'PENDING').length ?? 0);
+  const unreadCount = (countData?.count ?? 0) + (invitations?.filter((i) => i.status === 'PENDING').length ?? 0);
 
   const nav = [
     { href: '/dashboard',     label: t('dashboard'),     icon: LayoutDashboard, badge: 0 },

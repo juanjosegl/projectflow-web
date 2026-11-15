@@ -80,14 +80,14 @@ export default function TasksPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <StatusBadge value={task.priority} type="priority" label={tp(task.priority as any)} />
+                      <StatusBadge value={task.priority} type="priority" label={tp(task.priority)} />
                       <select
                         value={task.status}
                         onChange={(e) => updateMutation.mutate({ taskId: task.id, status: e.target.value as TaskStatus })}
                         className="h-7 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 text-xs text-slate-700 dark:text-slate-300"
                       >
                         {STATUSES.map((s) => (
-                          <option key={s} value={s}>{ts(s as any)}</option>
+                          <option key={s} value={s}>{ts(s)}</option>
                         ))}
                       </select>
                     </div>

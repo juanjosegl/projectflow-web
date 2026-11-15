@@ -1,5 +1,3 @@
-import { TaskStatus, TaskPriority, ProjectStatus } from '@/types';
-
 const STATUS_STYLES: Record<string, string> = {
   BACKLOG:     'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
   TODO:        'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400',

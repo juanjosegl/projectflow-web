@@ -96,7 +96,7 @@ export default function DashboardPage() {
                 const pct = totalTasks > 0 ? Math.round((count / totalTasks) * 100) : 0;
                 return (
                   <div key={status} className="flex items-center gap-3">
-                    <span className="text-xs text-slate-500 dark:text-slate-400 w-24 shrink-0">{ts(status as any)}</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 w-24 shrink-0">{ts(status)}</span>
                     <div className="flex-1 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                       <div className="h-full bg-slate-700 dark:bg-slate-400 rounded-full" style={{ width: `${pct}%` }} />
                     </div>
@@ -120,7 +120,7 @@ export default function DashboardPage() {
                     <div key={task.id} className="flex items-center justify-between py-2.5 border-b border-slate-100 dark:border-slate-800 last:border-0">
                       <div className="min-w-0 mr-3">
                         <p className="text-sm text-slate-800 dark:text-slate-200 font-medium truncate">{task.title}</p>
-                        <p className="text-xs text-slate-400 mt-0.5">{ts(task.status as any)}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">{ts(task.status)}</p>
                       </div>
                       <span className={`text-xs font-medium px-2 py-0.5 rounded shrink-0 ${PRIORITY_COLORS[task.priority]}`}>
                         {task.priority}

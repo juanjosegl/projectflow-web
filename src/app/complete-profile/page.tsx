@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import api from '@/lib/api';
 import { ApiResponse, User } from '@/types';
@@ -33,7 +32,7 @@ export default function CompleteProfilePage() {
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: Partial<User>) => {
       const res = await api.patch<ApiResponse<User>>('/users/me', data);
       return res.data.data;
     },

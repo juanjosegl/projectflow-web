@@ -2,14 +2,14 @@
 import { useTheme } from 'next-themes';
 import { useUIStore } from '@/store/ui.store';
 import { Sun, Moon, Monitor, Languages } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
 export function ThemeLanguageToggle() {
   const { theme, setTheme } = useTheme();
   const { locale, setLocale } = useUIStore();
-  const [mounted, setMounted] = useState(false);
+  // false during SSR, true in the browser: theme and locale are only known client-side.
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
-  useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
   const themes = [

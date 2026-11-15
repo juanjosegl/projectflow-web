@@ -1,9 +1,11 @@
 # ProjectFlow Web
 
+[![CI](https://github.com/juanjosegl/projectflow-web/actions/workflows/ci.yml/badge.svg)](https://github.com/juanjosegl/projectflow-web/actions/workflows/ci.yml)
+
 Frontend for **ProjectFlow**, a team task manager with kanban boards, roles, invitations, comments and notifications.
 API: [projectflow-api](https://github.com/juanjosegl/projectflow-api).
 
-Open the app and click **Open the live demo** to sign in as the admin of a ready-made demo team. You don't need an account.
+**Live demo: https://projectflow-web-rho.vercel.app**. Click **Open the live demo** to sign in as the admin of a ready-made demo team. You don't need an account. The demo data resets itself regularly, so feel free to move things around.
 
 ## Features
 

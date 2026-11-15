@@ -5,7 +5,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { authService } from '@/lib/services/auth.service';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { Menu, Sun, Moon, Monitor, ChevronDown, User, LogOut, Languages, Check } from 'lucide-react';
 import {
   DropdownMenu,
@@ -26,9 +26,9 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
   const { locale, setLocale } = useUIStore();
   const { user, clearAuth } = useAuthStore();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
+  // false during SSR, true in the browser: theme and locale are only known client-side.
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
-  useEffect(() => setMounted(true), []);
 
   const handleLogout = async () => {
     try { await authService.logout(); } catch {}
