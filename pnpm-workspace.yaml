@@ -1,3 +1,11 @@
 ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@swc/core'
   - sharp
   - unrs-resolver
+
+# Patched transitive versions (security advisories) until Next ships them itself.
+overrides:
+  baseline-browser-mapping: ^2.11.0
+  browserslist: ^4.28.7
+  source-map-js: ^1.2.2
