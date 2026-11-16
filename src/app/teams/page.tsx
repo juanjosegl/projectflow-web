@@ -19,7 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { teamsService } from '@/lib/services/teams.service';
 
-const createSchema = (t: (k: string) => string) => z.object({
+const createSchema = z.object({
   name: z.string().min(2),
   description: z.string().optional(),
 });
@@ -37,7 +37,7 @@ export default function TeamsPage() {
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
-    resolver: zodResolver(createSchema(t)),
+    resolver: zodResolver(createSchema),
   });
 
   const { mutate, isPending } = useMutation({

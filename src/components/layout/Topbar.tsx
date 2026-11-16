@@ -24,7 +24,7 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
   const t = useTranslations('nav');
   const { theme, setTheme } = useTheme();
   const { locale, setLocale } = useUIStore();
-  const { user, clearAuth } = useAuthStore();
+  const { user, signOut } = useAuthStore();
   const router = useRouter();
   // false during SSR, true in the browser: theme and locale are only known client-side.
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
@@ -33,7 +33,7 @@ export function Topbar({ onMobileMenuOpen }: TopbarProps) {
   const handleLogout = async () => {
     try { await authService.logout(); } catch {}
     clearQueryCache();
-    clearAuth();
+    signOut();
     router.push('/login');
   };
 

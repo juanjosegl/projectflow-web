@@ -1,36 +1,36 @@
 'use client';
 import { useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/auth.store';
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
+import { accessToken, useAuthStore } from '@/store/auth.store';
 import { authService } from '@/lib/services/auth.service';
 import { clearQueryCache } from '@/lib/providers';
-import { Loader2 } from 'lucide-react';
 
+// Landing page of the Google sign-in. The API puts the access token in the URL fragment
+// (#token=...), which is never sent to any server; it is read once and removed from history.
 export default function AuthCallbackPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const signIn = useAuthStore((s) => s.signIn);
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    const isNew = searchParams.get('new') === 'true';
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const token = params.get('token');
+    window.history.replaceState(null, '', window.location.pathname);
+    if (!token) {
+      router.replace('/login');
+      return;
+    }
 
-    if (!token) { router.replace('/login'); return; }
-
-    localStorage.setItem('access_token', token);
+    accessToken.set(token);
     clearQueryCache();
-
-    authService.me()
+    authService
+      .me()
       .then((user) => {
-        setAuth(user, token);
-        if (isNew) {
-          router.replace('/complete-profile');
-        } else {
-          router.replace('/dashboard');
-        }
+        signIn(user, token);
+        router.replace(params.get('new') === 'true' ? '/complete-profile' : '/dashboard');
       })
       .catch(() => router.replace('/login'));
-  }, [searchParams, router, setAuth]);
+  }, [router, signIn]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">

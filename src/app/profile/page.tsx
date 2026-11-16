@@ -21,7 +21,7 @@ import { ApiResponse, Role, User } from '@/types';
 
 export default function ProfilePage() {
   const t = useTranslations('profile');
-  const { user: storeUser, setAuth, accessToken } = useAuthStore();
+  const updateUser = useAuthStore((s) => s.updateUser);
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -57,7 +57,7 @@ export default function ProfilePage() {
       return res.data.data;
     },
     onSuccess: (updated) => {
-      setAuth({ ...storeUser!, ...updated }, accessToken ?? '');
+      updateUser(updated);
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       toast.success(t('saved'));
     },
@@ -74,7 +74,7 @@ export default function ProfilePage() {
       return res.data.data;
     },
     onSuccess: (data) => {
-      setAuth({ ...storeUser!, avatar: data.avatar }, accessToken ?? '');
+      updateUser({ avatar: data.avatar });
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       toast.success('Photo updated');
     },

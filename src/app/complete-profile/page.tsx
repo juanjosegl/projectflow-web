@@ -14,7 +14,7 @@ import api from '@/lib/api';
 import { ApiResponse, User } from '@/types';
 
 export default function CompleteProfilePage() {
-  const { user, setAuth, accessToken } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function CompleteProfilePage() {
       return res.data.data;
     },
     onSuccess: (updated) => {
-      setAuth({ ...user!, ...updated }, accessToken ?? '');
+      updateUser(updated);
       toast.success('Profile completed!');
       router.push('/dashboard');
     },

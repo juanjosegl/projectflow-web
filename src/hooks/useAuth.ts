@@ -12,12 +12,12 @@ const DEMO = { email: 'alice@projectflow.dev', password: 'Password123!' };
 
 export function useDemoLogin() {
   const router = useRouter();
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const signIn = useAuthStore((s) => s.signIn);
   return useMutation({
     mutationFn: () => authService.login(DEMO),
     onSuccess: ({ user, accessToken }) => {
       clearQueryCache();
-      setAuth(user, accessToken);
+      signIn(user, accessToken);
       router.push('/dashboard');
     },
     onError: () => toast.error('The demo account is not available right now. Try again in a minute.'),

@@ -27,7 +27,7 @@ export default function LoginPage() {
   const t = useTranslations('auth');
   useRedirectIfAuth();
   const router = useRouter();
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const signIn = useAuthStore((s) => s.signIn);
   const demo = useDemoLogin();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -38,15 +38,12 @@ export default function LoginPage() {
     mutationFn: authService.login,
     onSuccess: ({ user, accessToken }) => {
       clearQueryCache();
-      setAuth(user, accessToken);
+      signIn(user, accessToken);
       router.push('/dashboard');
     },
     onError: () => toast.error(t('invalidCredentials')),
   });
 
-  const handleGoogleLogin = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '')}/api/v1/auth/google`;
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4">
@@ -56,7 +53,7 @@ export default function LoginPage() {
           <CardDescription className="text-slate-500 dark:text-slate-400">{t('signInDesc')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button type="button" variant="outline" className="w-full gap-2 mb-4" onClick={handleGoogleLogin}>
+          <Button type="button" variant="outline" className="w-full gap-2 mb-4" onClick={authService.signInWithGoogle}>
             <svg width="16" height="16" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>

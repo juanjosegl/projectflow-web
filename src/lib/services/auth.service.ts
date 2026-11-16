@@ -13,6 +13,12 @@ export const authService = {
   async logout() {
     await api.post('/auth/logout');
   },
+  /** Full-page redirect: the OAuth flow runs on the API and comes back to /auth/callback. */
+  signInWithGoogle() {
+    // The destination is the API's origin, not a Next.js page, so the router can't handle it.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.assign(`${process.env.NEXT_PUBLIC_API_URL}/auth/google`);
+  },
   async me() {
     const res = await api.get<ApiResponse<User>>('/auth/me');
     return res.data.data;
